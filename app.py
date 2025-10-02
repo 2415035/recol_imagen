@@ -6,9 +6,9 @@ app = Flask(__name__)
 
 # 🚀 Configuración Cloudinary
 cloudinary.config( 
-  cloud_name = "TU_CLOUD_NAME", 
-  api_key = "TU_API_KEY", 
-  api_secret = "TU_API_SECRET"
+  cloud_name = "dmsjguosm", 
+  api_key = "221341567895561", 
+  api_secret = "Acxisi79tMdlx0H7kRdMPDbwEM0"
 )
 
 @app.route("/")
@@ -18,7 +18,7 @@ def index():
 @app.route("/upload", methods=["POST"])
 def upload():
     file = request.files["file"]
-    result = cloudinary.uploader.upload(file)
+    result = cloudinary.uploader.upload(file, folder="capturas")
     return jsonify(result)
 
 if __name__ == "__main__":
