@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import cloudinary
 import cloudinary.uploader
+import cloudinary.api
 
 app = Flask(__name__)
 
@@ -20,6 +21,12 @@ def upload():
     file = request.files["file"]
     result = cloudinary.uploader.upload(file, folder="capturas")
     return jsonify(result)
+
+@app.route("/list", methods=["GET"])
+def list_images():
+    resources = cloudinary.api.resources(type="upload", prefix="capturas", max_results=30)
+    urls = [res["secure_url"] for res in resources["resources"]]
+    return jsonify(urls)
 
 if __name__ == "__main__":
     app.run(debug=True)

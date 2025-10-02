@@ -37,9 +37,11 @@
   <div class="mt-3">
     <button id="capture" class="btn btn-primary">📸 Capturar</button>
     <button id="upload" class="btn btn-success" disabled>☁️ Subir a Cloudinary</button>
+    <button id="list" class="btn btn-secondary">📥 Descargar Imágenes</button>
   </div>
 
   <div id="preview" class="mt-4"></div>
+  <div id="gallery" class="mt-4"></div>
 
   <script>
     const video = document.getElementById("video");
@@ -99,6 +101,38 @@
 
       uploadBtn.textContent = "☁️ Subir a Cloudinary";
     });
+
+    const listBtn = document.getElementById("list");
+
+    // 🚀 Descargar lista de imágenes
+    listBtn.addEventListener("click", async () => {
+      const res = await fetch("/list");
+      const urls = await res.json();
+
+      const gallery = document.getElementById("gallery");
+      gallery.innerHTML = "<h4>📂 Imágenes almacenadas</h4>";
+
+      urls.forEach(url => {
+        const link = document.createElement("a");
+        link.href = url;
+        link.textContent = "📷 Descargar";
+        link.target = "_blank";
+        link.className = "btn btn-outline-dark m-1";
+
+        const img = document.createElement("img");
+        img.src = url;
+        img.style.maxWidth = "120px";
+        img.style.margin = "5px";
+        img.style.borderRadius = "8px";
+        img.style.border = "1px solid #ddd";
+
+        gallery.appendChild(img);
+        gallery.appendChild(document.createElement("br"));
+        gallery.appendChild(link);
+        gallery.appendChild(document.createElement("hr"));
+      });
+    });
+
   </script>
 </body>
 </html>
