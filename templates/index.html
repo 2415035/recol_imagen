@@ -104,7 +104,26 @@
 
     const listBtn = document.getElementById("list");
 
-    // 🚀 Descargar lista de imágenes
+    // 🚀 Función para descargar una sola imagen
+    async function downloadImage(url, filename) {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = filename; // nombre del archivo
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // 🚀 Función para descargar todas las imágenes visibles
+    async function downloadAll(urls) {
+      for (let i = 0; i < urls.length; i++) {
+        await downloadImage(urls[i], `imagen_${i+1}.jpg`);
+      }
+    }
+
+    // 🚀 Botón para listar imágenes
     listBtn.addEventListener("click", async () => {
       const res = await fetch("/list");
       const urls = await res.json();
@@ -112,25 +131,35 @@
       const gallery = document.getElementById("gallery");
       gallery.innerHTML = "<h4>📂 Imágenes almacenadas</h4>";
 
-      urls.forEach(url => {
-        const link = document.createElement("a");
-        link.href = url;
-        link.textContent = "📷 Descargar";
-        link.target = "_blank";
-        link.className = "btn btn-outline-dark m-1";
+      urls.forEach((url, idx) => {
+        const container = document.createElement("div");
+        container.className = "mb-3";
 
         const img = document.createElement("img");
         img.src = url;
-        img.style.maxWidth = "120px";
+        img.style.maxWidth = "200px";
         img.style.margin = "5px";
         img.style.borderRadius = "8px";
         img.style.border = "1px solid #ddd";
 
-        gallery.appendChild(img);
-        gallery.appendChild(document.createElement("br"));
-        gallery.appendChild(link);
-        gallery.appendChild(document.createElement("hr"));
+        const btn = document.createElement("button");
+        btn.textContent = "⬇️ Descargar";
+        btn.className = "btn btn-outline-primary m-2";
+        btn.onclick = () => downloadImage(url, `imagen_${idx+1}.jpg`);
+
+        container.appendChild(img);
+        container.appendChild(document.createElement("br"));
+        container.appendChild(btn);
+        gallery.appendChild(container);
       });
+
+      // 🚀 Botón "Descargar todas"
+      const downloadAllBtn = document.createElement("button");
+      downloadAllBtn.textContent = "⬇️ Descargar TODAS";
+      downloadAllBtn.className = "btn btn-danger mt-3";
+      downloadAllBtn.onclick = () => downloadAll(urls);
+
+      gallery.appendChild(downloadAllBtn);
     });
 
   </script>
